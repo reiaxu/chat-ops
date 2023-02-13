@@ -74,7 +74,7 @@ jobs:
           echo "UPDATED_TAG2=$((++CURRENT_TAG2))" >> $GITHUB_ENV
       - id: create_release
         env:
-           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, env.UPDATED_TAG2, '0') }}
+           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', needs.get-version.outputs.tag1, env.UPDATED_TAG2, '0') }}
         run: |
           echo "Updated tag is $UPDATED_TAG"
           gh release create "$UPDATED_TAG"
@@ -92,7 +92,7 @@ jobs:
           echo "UPDATED_TAG3=$((++CURRENT_TAG3))" >> $GITHUB_ENV
       - id: create_release
         env:
-           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, env.UPDATED_TAG3) }}
+           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', needs.get-version.outputs.tag1, needs.get-version.outputs.tag2, env.UPDATED_TAG3) }}
         run: |
           echo "Updated tag is $UPDATED_TAG"
           gh release create "$UPDATED_TAG"
