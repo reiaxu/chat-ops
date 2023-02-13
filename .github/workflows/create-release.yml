@@ -49,7 +49,7 @@ jobs:
       - run: echo "Update major release"
       - id: update_tag1
         run: |
-          echo "UPDATED_TAG1=$((++$CURRENT_TAG1))" >> $GITHUB_ENV
+          echo "UPDATED_TAG1=$((++CURRENT_TAG1))" >> $GITHUB_ENV
       - id: create_release
         env:
            UPDATED_TAG: format('v{0}.{1}.{2}', $UPDATED_TAG1, '0', '0')
@@ -67,7 +67,7 @@ jobs:
       - run: echo "Update minor release"
       - id: update_tag2
         run: |
-          echo "UPDATED_TAG2=$((++$CURRENT_TAG2))" >> $GITHUB_ENV
+          echo "UPDATED_TAG2=$((++CURRENT_TAG2))" >> $GITHUB_ENV
       - id: create_release
         env:
            UPDATED_TAG: format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, $UPDATED_TAG2, '0')
@@ -85,7 +85,7 @@ jobs:
       - run: echo "Update patch release"
       - id: update_tag3
         run: |
-          echo "UPDATED_TAG3=$((++$CURRENT_TAG3))" >> $GITHUB_ENV
+          echo "UPDATED_TAG3=$((++CURRENT_TAG3))" >> $GITHUB_ENV
       - id: create_release
         env:
            UPDATED_TAG: format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, $UPDATED_TAG3)
