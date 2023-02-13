@@ -19,6 +19,13 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
+  checkout:
+    name: Checkout and fetch tags
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
   get-version:
     name: Find current version number
     runs-on: ubuntu-latest
@@ -28,9 +35,6 @@ jobs:
       tag2: ${{ steps.describe2.outputs.tag }}
       tag3: ${{ steps.describe3.outputs.tag }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - run: echo "Current version number is $(git describe --tags)"
       - id: describe1
         run: echo "tag=$(git describe --tags 2> /dev/null | grep -o -E '[0-9]+' | sed -n '1p' || echo -n "0")" >> $GITHUB_OUTPUT
