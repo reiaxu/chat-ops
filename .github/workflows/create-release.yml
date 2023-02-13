@@ -43,40 +43,52 @@ jobs:
     if: ${{ github.event.inputs.patchtype == 'major' }}
     runs-on: ubuntu-latest
     needs: get-version
+    env:
+      CURRENT_TAG1: ${{ needs.get-version.outputs.tag1 }}
     steps:
       - run: echo "Update major release"
-      - id: major
+      - id: update_tag1
         run: |
-          inc=${{ needs.get-version.outputs.tag1 }}
-          inc=$((++inc))
-          tag=format('v{0}.{1}.{2}', $inc, '0', '0')
-          echo "Updated tag is $tag"
-          gh release create "$tag"
+          echo "UPDATED_TAG1=$((++$CURRENT_TAG1))" >> $GITHUB_ENV
+      - id: create_release
+        env:
+           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', $UPDATED_TAG1, '0', '0') }}
+        run: |
+          echo "Updated tag is $UPDATED_TAG"
+          gh release create "$UPDATED_TAG"
   minor-version:
     name: Modify second version number
     if: ${{ github.event.inputs.patchtype == 'minor' }}
     runs-on: ubuntu-latest
     needs: get-version
+    env:
+      CURRENT_TAG2: ${{ needs.get-version.outputs.tag2 }}
     steps:
       - run: echo "Update minor release"
-      - id: minor
+      - id: update_tag2
         run: |
-          inc=${{ needs.get-version.outputs.tag2 }}
-          inc=$((++inc))
-          tag=format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, $inc, '0')
-          echo "Updated tag is $tag"
-          gh release create "$tag"
+          echo "UPDATED_TAG2=$((++$CURRENT_TAG2))" >> $GITHUB_ENV
+      - id: create_release
+        env:
+           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, $UPDATED_TAG2, '0') }}
+        run: |
+          echo "Updated tag is $UPDATED_TAG"
+          gh release create "$UPDATED_TAG"
   patch-version:
     name: Modify third version number
     if: ${{ github.event.inputs.patchtype == 'patch' }}
     runs-on: ubuntu-latest
     needs: get-version
+    env:
+      CURRENT_TAG3: ${{ needs.get-version.outputs.tag3 }}
     steps:
       - run: echo "Update patch release"
-      - id: patch
+      - id: update_tag3
         run: |
-          inc=${{ needs.get-version.outputs.tag3 }}
-          inc=$((++inc))
-          tag=format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, $inc)
-          echo "Updated tag is $tag"
-          gh release create "$tag"
+          echo "UPDATED_TAG3=$((++$CURRENT_TAG3))" >> $GITHUB_ENV
+      - id: create_release
+        env:
+           UPDATED_TAG: ${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, $UPDATED_TAG3) }}
+        run: |
+          echo "Updated tag is $UPDATED_TAG"
+          gh release create "$UPDATED_TAG"
