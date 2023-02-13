@@ -49,7 +49,7 @@ jobs:
         run: |
           inc=${{ needs.get-version.outputs.tag1 }}
           inc=$((++inc))
-          tag=${{ format('v{0}.{1}.{2}', inc, '0', '0') }}
+          tag=${{ format('v{0}.{1}.{2}', $inc, '0', '0') }}
           echo "Updated tag is $tag"
           gh release create "$tag"
   minor-version:
@@ -63,7 +63,7 @@ jobs:
         run: |
           inc=${{ needs.get-version.outputs.tag2 }}
           inc=$((++inc))
-          tag=${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, inc, '0') }}
+          tag=${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, $inc, '0') }}
           echo "Updated tag is $tag"
           gh release create "$tag"
   patch-version:
@@ -77,6 +77,6 @@ jobs:
         run: |
           inc=${{ needs.get-version.outputs.tag3 }}
           inc=$((++inc))
-          tag=${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, inc) }}
+          tag=${{ format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, $inc) }}
           echo "Updated tag is $tag"
           gh release create "$tag"
