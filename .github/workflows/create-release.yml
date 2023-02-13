@@ -15,7 +15,8 @@ on:
         - minor
         # increment third version number
         - patch
-        
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
   get-version:
     name: Find current version number
@@ -28,11 +29,11 @@ jobs:
     steps:
       - run: echo "Current version number is $(git describe --tags)"
       - id: describe1
-        run: echo "tag=$(git describe --tags | grep -o -E '[0-9]+' | sed -n '1p')" >> $GITHUB_OUTPUT
+        run: echo "tag=$(git describe --tags 2> /dev/null | grep -o -E '[0-9]+' | sed -n '1p' || echo -n "0")" >> $GITHUB_OUTPUT
       - id: describe2
-        run: echo "tag=$(git describe --tags | grep -o -E '[0-9]+' | sed -n '2p')" >> $GITHUB_OUTPUT
+        run: echo "tag=$(git describe --tags 2> /dev/null | grep -o -E '[0-9]+' | sed -n '2p' || echo -n "0")" >> $GITHUB_OUTPUT
       - id: describe3
-        run: echo "tag=$(git describe --tags | grep -o -E '[0-9]+' | sed -n '3p')" >> $GITHUB_OUTPUT          
+        run: echo "tag=$(git describe --tags 2> /dev/null | grep -o -E '[0-9]+' | sed -n '3p' || echo -n "0")" >> $GITHUB_OUTPUT          
   major-version:
     name: Modify first version number
     if: ${{ github.event.inputs.message == 'major' }}
@@ -47,6 +48,7 @@ jobs:
           inc=${{ needs.get-version.outputs.tag1 }}
           inc=$((++inc))
           echo "tag=format('v{0}.{1}.{2}', inc, '0', '0')" >> $GITHUB_OUTPUT
+          gh release create "$tag"
   minor-version:
     name: Modify second version number
     if: ${{ github.event.inputs.message == 'minor' }}
@@ -61,6 +63,7 @@ jobs:
           inc=${{ needs.get-version.outputs.tag2 }}
           inc=$((++inc))
           echo "tag=format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, inc, '0')" >> $GITHUB_OUTPUT
+          gh release create "$tag"
   patch-version:
     name: Modify third version number
     if: ${{ github.event.inputs.message == 'patch' }}
@@ -75,19 +78,4 @@ jobs:
           inc=${{ needs.get-version.outputs.tag3 }}
           inc=$((++inc))
           echo "tag=format('v{0}.{1}.{2}', ${{ needs.get-version.outputs.tag1 }}, ${{ needs.get-version.outputs.tag2 }}, inc)" >> $GITHUB_OUTPUT
-  update-version:
-    name: Create release with updated version
-    runs-on: ubuntu-latest
-    needs: get-version
-    steps:
-      - run: updated='v0.1.0'
-        if: ${{ $(git describe --tags) == '' }}
-      - run: updated=${{ needs.major-version.outputs.tag }}
-        if: ${{ github.event.inputs.message == 'major' }}
-      - run: updated=${{ needs.minor-version.outputs.tag }}
-        if: ${{ github.event.inputs.message == 'minor' }}
-      - run: updated=${{ needs.patch-version.outputs.tag }}
-        if: ${{ github.event.inputs.message == 'patch' }}
-      - run: gh release create $updated
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          gh release create "$tag"
