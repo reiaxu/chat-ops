@@ -11,7 +11,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -38,3 +38,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Modify deployment.yaml
+        run: |
+          sed -i "s/image: ghcr.io\/reiaxu\/chat-ops.*/image: ghcr.io\/reiaxu\/chat-ops:${GITHUB_REF##*/}/" deployment.yaml
+          git add deployment.yaml
+          git commit -m "Update deployment version"
+          git push
