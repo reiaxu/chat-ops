@@ -4,7 +4,13 @@ metadata:
   name: chat-ops
   namespace: default
 spec:
+  selector:
+    matchLabels:
+      app: chat-ops
   template:
+    metadata:
+      labels:
+        app: chat-ops
     spec:
       containers:
         - name: chat-ops
