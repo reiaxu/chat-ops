@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-ops
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - name: chat-ops
+          image: ghcr.io/reiaxu/chat-ops:latest
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: github-container-registry
