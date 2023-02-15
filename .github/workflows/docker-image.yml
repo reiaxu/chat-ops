@@ -41,6 +41,8 @@ jobs:
 
       - name: Modify deployment.yaml
         run: |
+          git config --global user.email "rx319@ic.ac.uk"
+          git config --global user.name "reiaxu"
           sed -i "s/image: ghcr.io\/reiaxu\/chat-ops.*/image: ghcr.io\/reiaxu\/chat-ops:${GITHUB_REF##*/}/" deployment.yaml
           git add deployment.yaml
           git commit -m "Update deployment version"
