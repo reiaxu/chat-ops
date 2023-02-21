@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: chat-ops
-          image: ghcr.io/reiaxu/chat-ops:v1.3.3
+          image: ghcr.io/reiaxu/chat-ops:v1.4.0
           command: ["tail"]
           args: ["-f", "/dev/null"]
       imagePullSecrets:
