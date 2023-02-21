@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: chat-ops
-          image: ghcr.io/reiaxu/chat-ops:v1.4.0
+          image: ghcr.io/reiaxu/chat-ops:v1.3.3
       imagePullSecrets:
         - name: github-container-registry
