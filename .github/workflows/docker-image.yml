@@ -46,4 +46,4 @@ jobs:
           sed -i "s/image: ghcr.io\/reiaxu\/chat-ops.*/image: ghcr.io\/reiaxu\/chat-ops:${GITHUB_REF##*/}/" deployment.yaml
           git add deployment.yaml
           git commit -m "Update deployment version"
-          git push
+          git push origin HEAD:main
