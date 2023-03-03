@@ -1,12 +1,13 @@
 # chat-ops
 
-## Instructions
+## Instructions for Ubuntu 22.04
 
-### Configure ArgoCD on Docker Desktop with Ubuntu 22.04
+### Configure ArgoCD on Docker Desktop
 
 Prerequisite: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 1. Enable Kubernetes in Docker Desktop settings
+
 2. Create a namespace called argocd where all ArgoCD resources will be installed
 
 ```
@@ -44,47 +45,44 @@ ruochen@DESKTOP-ABC:~$ kubectl -n argocd get secret argocd-initial-admin-secret 
 
 6. Access the ArgoCD dashboard [here](https://localhost:8080). Use the username 'admin' and password obtained in the previous step to log in.
 
-7. Create ArgoCD application that points to deployment
+7. Navigate to the "Applications" tab and create a new app in the default namespace. Set the sync policy to "Automatic" and add the appropriate git repository e.g. https://github.com/reiaxu/chat-ops with the corresponding path of the deployment.yaml file which ArgoCD reads from.
 
-### Creating the Slackbot in Windows
+### Creating the Slackbot
 
 Prerequisite: a [Slack](https://slack.com/intl/en-gb/downloads/) workspace
 
 1. Create a new App using the [Slack API](https://api.slack.com/apps). Create the App from scratch, give it a name and add the appropriate workspace the App will be in.
+
 2. Configure App permissions in 'Features: OAuth & Permissions'. Under 'Scopes: Bot Token Scopes', add the ```chat:write``` permission to the bot. This will allow the bot to post messages.
+
 3. 'Install App to Workspace' under 'OAuth & Permissions: OAuth Tokens & Redirect URLs'. Allow the bot to access the workspace with the appropriate permissions. The app can then be found in the 'Apps' section of your Slack workspace. You may choose to add the app to a channel by clicking on its name and selecting 'Add this app to a channel', or you can simply message it directly.
+
 4. Create and activate a new Python virtual environment in the project directory using Python 3.6 or later with
 
 ```
-PS C:\Users\ruoch\chat-ops> python3 -m venv .venv
-PS C:\Users\ruoch\chat-ops> .\.venv\Scripts\activate
+ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ python3 -m venv .venv
+ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ source .venv/bin/activate
 ```
 
 5. Store the Slack signing secret (found in 'Basic Information: App credentials') in a new environment variable
 
 ```
-(.venv) PS C:\Users\ruoch\chat-ops> set SLACK_SIGNING_SECRET=\<your-signing-secret>
+ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ export SLACK_SIGNING_SECRET=\<your-signing-secret>
 ```
 
 6. Store the Bot User OAuth Token (xoxb token found in 'OAuth & Permissions: OAuth Tokens for Your Workspace') in another environment variable
 
 ```
-(.venv) PS C:\Users\ruoch\chat-ops> set SLACK_BOT_TOKEN=xoxb-\<your-bot-token>
+ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ export SLACK_BOT_TOKEN=xoxb-\<your-bot-token>
 ```
 
 7. Store a [newly-created GitHub Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) with Read access to metadata, and Read and Wrie access to actions and code in another environment variable.
 
 ```
-(.venv) PS C:\Users\ruoch\chat-ops> set BOT_GITHUB_PAT=<your-github-pat>
+ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ exportBOT_GITHUB_PAT=<your-github-pat>
 ```
 
-8. Install the '''slack_bolt''' Python package to your virtual environment
-
-```
-(.venv) PS C:\Users\ruoch\chat-ops> pip install slack_bolt
-```
-
-9. To host the bot so that your development environment can receive requests, download [ngrok](https://ngrok.com/download) and run
+8. To host the bot so that your development environment can receive requests, download [ngrok](https://ngrok.com/download) and run
 
 ```
 ruochen@DESKTOP-ABC:~$ ngrok http 3000
@@ -103,8 +101,19 @@ Connections             ttl     opn     rt1     rt5     p50     p90
                         0       0       0.00    0.00    0.00    0.00
 ```
 
-10.  
+9. Running the app as follows will initialise the app with the ```App``` constructor, and start a HTTP server on port 3000.
+
+```
+(.venv) ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ python3 app.py
+```
+
+10. The slash command ```\release [project-name] [release-type: major/minor/patch]``` will be used by users to deploy their releases. Create a new slash command in "Features: Slash Commands" and configure its usage accordingly. For the Slackbot to listen to these requests, Bolt for Python listens for all incoming requests at the ```/slack/events``` route. Add the ngrok url \<https://redacted.eu.ngrok.io/slack/events\> that will be port-forwarded to localhost port 3000 under "Request URL".
+
+11. Install the app to your Slack workspace under "Settings: Install App" and reinstall the app to your workspace.
+
+12. Test the app by adding the Slackbot to a channel and sending ```\release [project-name] [release-type]``` to the channel. This should trigger the deployment workflow and create a new GitHub release. It should also add a new replica set to the app deployment in ArgoCD.
 
 ## References
 
 1. [ArgoCD on Docker Desktop](https://collabnix.com/getting-started-with-argocd-on-docker-desktop/)
+2. [Building an app with Bolt for Python](https://api.slack.com/start/building/bolt-python)
