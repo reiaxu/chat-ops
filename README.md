@@ -1,5 +1,7 @@
 # chat-ops
 
+Slackbot that allows users to automatically release and deploy an application contained within a GitHub repository. When the user enters the name of the application and the semantic-version increment, a GitHub workflow is invoked to create a new tag and release. This then triggers a second workflow which builds a Dockerfile describing the application and finally updates a YAML file that ArgoCD reads from, to deploy the application to a Kubernetes cluster.
+
 ## Instructions for Ubuntu 22.04
 
 ### Configure ArgoCD on Docker Desktop
