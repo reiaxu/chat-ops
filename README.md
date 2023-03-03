@@ -62,6 +62,7 @@ Prerequisite: a [Slack](https://slack.com/intl/en-gb/downloads/) workspace
 ```
 ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ python3 -m venv .venv
 ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ source .venv/bin/activate
+ruochen@DESKTOP-ABC:/mnt/c/Users/ruoch/chat-ops$ python3 -m pip install -r requirements.txt
 ```
 
 5. Store the Slack signing secret (found in 'Basic Information: App credentials') in a new environment variable
